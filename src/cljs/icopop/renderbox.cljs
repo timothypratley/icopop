@@ -2,10 +2,6 @@
   (:require [reagent.core :as reagent]
             [cljsjs.three]))
 
-(defonce state
-  (reagent/atom {:ico-scale 1
-                 :face-scale 1}))
-
 (def ico-scale 1)
 (def face-scale 0.7)
 
@@ -42,26 +38,16 @@
   (apply map vector v))
 
 (defn icos []
-  (let [o (js/THREE.Object3D.)]
+  (let [icosahedron (js/THREE.Object3D.)]
     (doseq [triangle indices
             :let [vs (map vertices triangle)
-                  [x y z :as a] (map average (transpose vs))
-                  nvs (for [v vs]
-                        (map - v a))
-                  face (geo nvs)]]
-      (.add o face)
-      (.translateX face x)
-      (.translateY face y)
-      (.translateZ face z))
-    o))
-
-(defn add-cube [scene]
-  (let [geometry (js/THREE.CubeGeometry. 1 1 1)
-        material (js/THREE.MeshBasicMaterial. #js {:color 0x00ff00
-                                                   :wireframe true})
-        cube (js/THREE.Mesh. geometry material)]
-    (.add scene cube)
-    cube))
+                  [x y z :as face-center] (map average (transpose vs))
+                  normalized-vertices (for [v vs]
+                                        (map - v face-center))
+                  face-mesh (geo normalized-vertices)]]
+      (.set (.-position face-mesh) x y z)
+      (.add icosahedron face-mesh))
+    icosahedron))
 
 (defn offset [element]
   (let [body (.getBoundingClientRect js/document.body)
@@ -70,7 +56,7 @@
      (- (.-top elem) (.-top body))]))
 
 (defn renderbox* []
-  [:canvas {:on-mouse-move (fn [e]
+  [:canvas {:on-mouse-move (fn a-mouse-move [e]
                              (let [[ox oy] (offset (.-target e))
                                    x (- (.-pageX e) ox)
                                    y (- (.-pageY e) oy)]
@@ -86,7 +72,6 @@
       :reagent-render renderbox*
       :component-did-mount
       (fn did-mount [this]
-        (println "did-mount")
         (let [node (.getDOMNode this)
               width (.-offsetWidth node)
               height (.-offsetHeight node)
@@ -106,12 +91,10 @@
                (js/requestAnimationFrame render)
                (set! (.. thing -rotation -y) (+ 0.01 (.. thing -rotation -y)))
                (set! (.. thing -rotation -x) (+ 0.003 (.. thing -rotation -x)))
-               (set! (.. thing -rotation -z) (+ 0.001 (.. thing -rotation -z)))
                (.set (.-scale thing) ico-scale ico-scale ico-scale)
                (doseq [face (.-children thing)]
                  (.set (.-scale face) face-scale face-scale face-scale))
                (.render renderer scene camera))))))
       :component-will-unmount
       (fn will-unmount [this]
-        (println "will-unmount")
         (reset! running false))})))

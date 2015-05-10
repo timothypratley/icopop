@@ -14,7 +14,12 @@
      [:meta {:charset "utf-8"}]
      [:meta {:name "viewport"
              :content "width=device-width, initial-scale=1"}]
-     (include-css (if (env :dev) "css/site.css" "css/site.min.css"))]
+     (include-css (if (env :dev)
+                    "css/site.css"
+                    "css/site.min.css"))
+     [:link {:rel "shortcut icon"
+             :href "favicon.ico"
+             :type "image/x-icon"}]]
     [:body
      [:div#app]
      (include-js "js/app.js")]]))
