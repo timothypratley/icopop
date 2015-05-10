@@ -85,5 +85,6 @@
                                    :builds {:app
                                              {:source-paths ["env/prod/cljs"]
                                               :compiler
-                                              {:optimizations :advanced
+                                              ;; TODO: advanced never works
+                                              {:optimizations :whitespace
                                                :pretty-print false}}}}}})

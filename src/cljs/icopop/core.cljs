@@ -19,7 +19,7 @@
     [:p {:style {:text-align "left"}}
      "Mouse over the render area to change the scale of the icosahedron and the triangles composing it. The y-axis changes the scale of the icosahedron, while the x-axis changes the scale of the individual triangle faces. There are 20 triangle faces constructed as individual Mesh objects so that they can be manipulated independently. They are constructed from a list of known verticies on an icosahedron, but each triangle is constructed with points normalized around origin. Then they are added to a parent object, and translated to the midpoint of the original face position. Thus when the triangle meshes are scaled, they are scaled relative to their true position in the icosahedron shape."]
     [:ol
-     [:li [:a {:href "//github.com/timothypratley"}
+     [:li [:a {:href "//github.com/timothypratley/icopop"}
            "Code on github"]]
      [:li [:a {:href "timothypratley.blogspot.com"}
            "My blog"]]
